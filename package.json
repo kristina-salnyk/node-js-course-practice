@@ -1,0 +1,38 @@
+{
+  "name": "js-course-practice",
+  "version": "1.0.0",
+  "description": "NodeJS Course Practice",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node .",
+    "start:dev": "cross-env NODE_ENV=development nodemon --watch src",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint --fix **/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristina-salnyk/node-js-course-practice.git"
+  },
+  "author": "Kristina Salnyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kristina-salnyk/node-js-course-practice/issues"
+  },
+  "homepage": "https://github.com/kristina-salnyk/node-js-course-practice#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.2",
+    "generate-unique-id": "^2.0.3",
+    "joi": "^17.10.2",
+    "nodemon": "^3.0.1",
+    "path": "^0.12.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
