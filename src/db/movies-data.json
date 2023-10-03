@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "title": "The Avatar",
+    "description": "The Avatar isthe spirit of the planet manifested in human form. When the Avatar dies, it reincarnates into the next nation in the Avatar Cycle. The Avatar Cycle parallels the seasons: winter for The Water Tribes, spring for the Earth Kingdom, summer for the Fire Nation, and autumn for the Air Nomads.",
+    "genre": [
+      "Thriller"
+    ],
+    "duration": 95
+  },
+  {
+    "id": "2",
+    "title": "The Legend of Korra 1",
+    "description": "The Legend of Korra is set in the Avatar universe as a spin-off of Avatar: The Last Airbender. The new series takes place seventy years after the end of the Avatar: The Last Airbender story arc with new characters and settings.",
+    "genre": [
+      "Fantasy",
+      "Adventure"
+    ],
+    "duration": 200
+  },
+  {
+    "id": "3",
+    "title": "The Last Airbender",
+    "description": "The Last Airbender is a 2010 American action-adventure fantasy film written, co-produced and directed by M. Night Shyamalan. Based on the first season of the Nickelodeon animated television series Avatar: The Last Airbender, the film stars Noah Ringer as Aang, with Dev Patel as Prince Zuko, Nicola Peltz as Katara and Jackson Rathbone as Sokka.",
+    "genre": [
+      "Comedy",
+      "Adventure"
+    ],
+    "duration": 122
+  },
+  {
+    "id": "4",
+    "title": "The Rise of Kyoshi",
+    "description": "F. C. Yee's The Rise of Kyoshi delves into the story of Kyoshi, the Earth Kingdom-born Avatar. The longest-living Avatar in this beloved world's history, Kyoshi established the brave and respected Kyoshi Warriors, but also founded the secretive Dai Li, which led to the corruption, decline, and fall of her own nation.",
+    "genre": [
+      "Historical Fiction",
+      "Fantasy"
+    ],
+    "duration": 85
+  },
+  {
+    "id": "5",
+    "title": "The Shadow of Kyoshi",
+    "description": "The Shadow of Kyoshi is the second novel in the Kyoshi Novels series, written by F. C. Yee. It is a sequel to The Rise of Kyoshi, and it covers the story of Kyoshi's life as the Avatar after the events of the first novel. The novel was released on July 21, 2020.",
+    "genre": [
+      "Novel",
+      "Fantasy"
+    ],
+    "duration": 130
+  },
+  {
+    "id": "6",
+    "title": "The Search",
+    "description": "The Search is a graphic novel trilogy set one year after the events of The Promise and preceding those of The Rift. Written by Gene Yang with Michael Dante DiMartino and Bryan Konietzko, the trilogy was released by Dark Horse Comics in collaboration with Nickelodeon in three separate installments throughout 2013.",
+    "genre": [
+      "Thriller",
+      "Mystery"
+    ],
+    "duration": 120
+  },
+  {
+    "id": "7",
+    "title": "The Promise",
+    "description": "The Promise is a graphic novel trilogy that continues the Avatar: The Last Airbender storyline. Written by Gene Yang with Michael Dante DiMartino and Bryan Konietzko, the trilogy was released by Dark Horse Comics in collaboration with Nickelodeon in three separate installments throughout 2012.",
+    "genre": "Fantasy",
+    "duration": 125
+  }
+]
