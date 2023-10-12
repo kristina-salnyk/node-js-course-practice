@@ -1,11 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJSDoc = require('swagger-jsdoc');
+import express, {NextFunction, Request, Response} from "express";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
 
-const options = require('./configs/swagger-config.json');
-const moviesRouter = require('./routes/movies');
-const genresRouter = require('./routes/genres');
+import options from "./configs/swagger-config.json";
+import moviesRouter from "./routes/movies";
+import genresRouter from "./routes/genres";
+import ApiError from "./interfaces/ApiError";
 
 const app = express();
 const swaggerSpec = swaggerJSDoc(options);
@@ -50,7 +51,7 @@ app.use('/api/genres', genresRouter);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-app.get('/health-check', (req, res) => {
+app.get('/health-check', (_req: Request, res: Response): void => {
   res.send({status: 'OK'});
 });
 
@@ -86,11 +87,11 @@ app.get('/health-check', (req, res) => {
  *          schema:
  *            $ref: '#/components/schemas/InternalServerError'
  */
-app.use((req, res) => {
+app.use((_req: Request, res: Response): void => {
   res.status(404).json({error: 'Not found'});
 });
 
-app.use((err, req, res, next) => {
+app.use((err: ApiError, _req: Request, res: Response, _next: NextFunction) => {
   if (err.status) {
     return res.status(err.status).json({error: err.message});
   }
@@ -98,4 +99,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({error: 'Internal server error'});
 });
 
-module.exports = app;
+export default app;

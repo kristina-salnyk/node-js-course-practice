@@ -1,7 +1,7 @@
-const express = require('express');
-const {getMovies, getMovieById, addMovie, removeMovie, updateMovie} = require('../services/movies');
-const validateBody = require('../middlewares/validateBody');
-const movieInputSchema = require('../schemas/movieInputSchema');
+import express, {NextFunction, Request, Response} from "express";
+import {addMovie, getMovieById, getMovies, removeMovie, updateMovie} from "../services/movies";
+import validateBody from "../middlewares/validateBody";
+import movieInputSchema from "../schemas/movieInputSchema";
 
 const router = express.Router();
 
@@ -81,7 +81,7 @@ const router = express.Router();
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/', async (req, res, next) => {
+router.get('/', async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const movies = await getMovies();
     res.json(movies);
@@ -124,7 +124,7 @@ router.get('/', async (req, res, next) => {
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/:movieId', async (req, res, next) => {
+router.get('/:movieId', async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const {movieId} = req.params;
     const movie = await getMovieById(movieId);
@@ -175,7 +175,7 @@ router.get('/:movieId', async (req, res, next) => {
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.post('/', validateBody(movieInputSchema), async (req, res, next) => {
+router.post('/', validateBody(movieInputSchema), async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const {title, description, genre, duration} = req.body;
     const movie = await addMovie({title, description, genre, duration});
@@ -215,7 +215,7 @@ router.post('/', validateBody(movieInputSchema), async (req, res, next) => {
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.delete('/:movieId', async (req, res, next) => {
+router.delete('/:movieId', async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const {movieId} = req.params;
     const movie = await getMovieById(movieId);
@@ -283,15 +283,20 @@ router.delete('/:movieId', async (req, res, next) => {
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.put('/:movieId', validateBody(movieInputSchema), async (req, res, next) => {
+router.put('/:movieId', validateBody(movieInputSchema), async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const {movieId} = req.params;
     const {title, description, genre, duration} = req.body;
     const movie = await updateMovie(movieId, {title, description, genre, duration});
+
+    if (!movie) {
+      return res.status(404).json({error: 'Movie not found'});
+    }
+
     res.json(movie);
   } catch (error) {
     next(error);
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,5 +1,5 @@
-const express = require('express');
-const {getGenres, getGenreById} = require('../services/genres');
+import express, {NextFunction, Request, Response} from "express";
+import {getGenreById, getGenres} from "../services/genres";
 
 const router = express.Router();
 
@@ -44,7 +44,7 @@ const router = express.Router();
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/', async (req, res, next) => {
+router.get('/', async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const genres = await getGenres();
     res.json(genres);
@@ -87,7 +87,7 @@ router.get('/', async (req, res, next) => {
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/:genreId', async (req, res, next) => {
+router.get('/:genreId', async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const {genreId} = req.params;
     const genre = await getGenreById(genreId);
@@ -102,4 +102,4 @@ router.get('/:genreId', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;
