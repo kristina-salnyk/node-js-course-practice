@@ -6,7 +6,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "overrides": [
     {
@@ -26,26 +27,27 @@
     "ecmaVersion": "latest"
   },
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "rules": {
     "no-var": "error",
-    "semi": "error",
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
-    "no-multi-spaces": "error",
-    "space-in-parens": "error",
-    "no-multiple-empty-lines": "error",
     "prefer-const": "error",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
         "argsIgnorePattern": "^_"
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 80,
+        "trailingComma": "none",
+        "semi": true,
+        "singleQuote": false,
+        "useSpaces": true,
+        "endOfLine": "auto"
       }
     ]
   }

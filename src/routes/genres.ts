@@ -1,5 +1,5 @@
-import express, {NextFunction, Request, Response} from "express";
-import {getGenreById, getGenres} from "../services/genres";
+import express, { NextFunction, Request, Response } from "express";
+import { getGenreById, getGenres } from "../services/genres";
 
 const router = express.Router();
 
@@ -44,14 +44,17 @@ const router = express.Router();
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/', async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const genres = await getGenres();
-    res.json(genres);
-  } catch (error) {
-    next(error);
+router.get(
+  "/",
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const genres = await getGenres();
+      res.json(genres);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -87,19 +90,26 @@ router.get('/', async (_req: Request, res: Response, next: NextFunction): Promis
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get('/:genreId', async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  try {
-    const {genreId} = req.params;
-    const genre = await getGenreById(genreId);
+router.get(
+  "/:genreId",
+  async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const { genreId } = req.params;
+      const genre = await getGenreById(genreId);
 
-    if (!genre) {
-      return res.status(404).json({error: 'Genre not found'});
+      if (!genre) {
+        return res.status(404).json({ error: "Genre not found" });
+      }
+
+      res.json(genre);
+    } catch (error) {
+      next(error);
     }
-
-    res.json(genre);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 export default router;

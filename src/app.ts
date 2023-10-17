@@ -1,4 +1,4 @@
-import express, {NextFunction, Request, Response} from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
@@ -6,7 +6,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import options from "./configs/swagger-config.json";
 import moviesRouter from "./routes/movies";
 import genresRouter from "./routes/genres";
-import ApiError from "./interfaces/ApiError";
+import ApiError from "./classes/ApiError";
 
 const app = express();
 const swaggerSpec = swaggerJSDoc(options);
@@ -14,10 +14,10 @@ const swaggerSpec = swaggerJSDoc(options);
 app.use(cors());
 app.use(express.json());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api/movies', moviesRouter);
-app.use('/api/genres', genresRouter);
+app.use("/api/movies", moviesRouter);
+app.use("/api/genres", genresRouter);
 
 /**
  * @swagger
@@ -51,8 +51,8 @@ app.use('/api/genres', genresRouter);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-app.get('/health-check', (_req: Request, res: Response): void => {
-  res.send({status: 'OK'});
+app.get("/health-check", (_req: Request, res: Response): void => {
+  res.send({ status: "OK" });
 });
 
 /**
@@ -88,15 +88,15 @@ app.get('/health-check', (_req: Request, res: Response): void => {
  *            $ref: '#/components/schemas/InternalServerError'
  */
 app.use((_req: Request, res: Response): void => {
-  res.status(404).json({error: 'Not found'});
+  res.status(404).json({ error: "Not found" });
 });
 
 app.use((err: ApiError, _req: Request, res: Response, _next: NextFunction) => {
   if (err.status) {
-    return res.status(err.status).json({error: err.message});
+    return res.status(err.status).json({ error: err.message });
   }
 
-  res.status(500).json({error: 'Internal server error'});
+  res.status(500).json({ error: "Internal server error" });
 });
 
 export default app;
