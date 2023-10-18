@@ -2,7 +2,7 @@ import { ObjectSchema } from "joi";
 import { NextFunction, Request, Response } from "express";
 
 import MovieInput from "../interfaces/MovieInput";
-import ApiError from "../classes/ApiError";
+import ApiError from "../errors/ApiError";
 
 const validateBody = (schema: ObjectSchema<MovieInput>) => {
   return (req: Request, _res: Response, next: NextFunction): void => {

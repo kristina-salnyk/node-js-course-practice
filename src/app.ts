@@ -6,7 +6,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import options from "./configs/swagger-config.json";
 import moviesRouter from "./routes/movies";
 import genresRouter from "./routes/genres";
-import ApiError from "./classes/ApiError";
+import ApiError from "./errors/ApiError";
 
 const app = express();
 const swaggerSpec = swaggerJSDoc(options);
