@@ -1,11 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJSDoc = require('swagger-jsdoc');
+import express, { NextFunction, Request, Response } from "express";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
 
-const options = require('./configs/swagger-config.json');
-const moviesRouter = require('./routes/movies');
-const genresRouter = require('./routes/genres');
+import options from "./configs/swagger-config.json";
+import moviesRouter from "./routes/movies";
+import genresRouter from "./routes/genres";
+import ApiError from "./errors/ApiError";
 
 const app = express();
 const swaggerSpec = swaggerJSDoc(options);
@@ -13,10 +14,10 @@ const swaggerSpec = swaggerJSDoc(options);
 app.use(cors());
 app.use(express.json());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api/movies', moviesRouter);
-app.use('/api/genres', genresRouter);
+app.use("/api/movies", moviesRouter);
+app.use("/api/genres", genresRouter);
 
 /**
  * @swagger
@@ -50,8 +51,8 @@ app.use('/api/genres', genresRouter);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-app.get('/health-check', (req, res) => {
-  res.send({status: 'OK'});
+app.get("/health-check", (_req: Request, res: Response): void => {
+  res.send({ status: "OK" });
 });
 
 /**
@@ -86,16 +87,16 @@ app.get('/health-check', (req, res) => {
  *          schema:
  *            $ref: '#/components/schemas/InternalServerError'
  */
-app.use((req, res) => {
-  res.status(404).json({error: 'Not found'});
+app.use((_req: Request, res: Response): void => {
+  res.status(404).json({ error: "Not found" });
 });
 
-app.use((err, req, res, next) => {
+app.use((err: ApiError, _req: Request, res: Response, _next: NextFunction) => {
   if (err.status) {
-    return res.status(err.status).json({error: err.message});
+    return res.status(err.status).json({ error: err.message });
   }
 
-  res.status(500).json({error: 'Internal server error'});
+  res.status(500).json({ error: "Internal server error" });
 });
 
-module.exports = app;
+export default app;

@@ -14,7 +14,6 @@
     ]
   },
   "apis": [
-    "./src/app.js",
-    "./src/routes/*.js"
+    "./src/**/*.ts"
   ]
 }
