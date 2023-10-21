@@ -21,6 +21,16 @@ export const removeMovie = async (id: string): Promise<void | null> => {
   return Movie.findOneAndRemove({ _id: id });
 };
 
+export const getMoviesByGenre = async (
+  id: string
+): Promise<MovieDocument[]> => {
+  return Movie.find({ genre: { $in: [id] } }).populate(
+    "genre",
+    { _id: 1, name: 1 },
+    Genre
+  );
+};
+
 export const createMovie = async (
   data: MovieInput
 ): Promise<MovieDocument | null> => {

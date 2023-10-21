@@ -3,10 +3,12 @@ import {
   createMovie,
   getMovieById,
   getMovies,
+  getMoviesByGenre,
   removeMovie,
   updateMovie
 } from "../controllers/movies";
 import validateBody from "../middlewares/validateBody";
+import validateId from "../middlewares/validateId";
 import movieInputSchema from "../schemas/movieInputSchema";
 
 const router = express.Router();
@@ -61,7 +63,38 @@ router.get("/", getMovies);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get("/:id", getMovieById);
+router.get("/:id", validateId(), getMovieById);
+
+/**
+ * @swagger
+ * /api/movies/genre/{id}:
+ *   get:
+ *     summary: Get a list of movies by genre
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of the genre
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *          description: Returns a list of movies
+ *          content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Movie'
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
+ *       404:
+ *          $ref: '#/components/responses/GenreNotFoundResponse'
+ *       500:
+ *          $ref: '#/components/responses/InternalServerErrorResponse'
+ */
+router.get("/genre/:id", validateId(), getMoviesByGenre);
 
 /**
  * @swagger
@@ -117,7 +150,7 @@ router.post("/", validateBody(movieInputSchema), createMovie);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.delete("/:id", removeMovie);
+router.delete("/:id", validateId(), removeMovie);
 
 /**
  * @swagger
@@ -155,6 +188,6 @@ router.delete("/:id", removeMovie);
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.put("/:id", validateBody(movieInputSchema), updateMovie);
+router.put("/:id", validateId(), validateBody(movieInputSchema), updateMovie);
 
 export default router;

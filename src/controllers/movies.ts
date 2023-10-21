@@ -38,6 +38,27 @@ export const getMovieById = async (
   }
 };
 
+export const getMoviesByGenre = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const genreCount = await genreService.countGenres([id]);
+
+    if (genreCount === 0) {
+      const e = new ApiError("Genre not found", 404);
+      return next(e);
+    }
+
+    const movies = await movieService.getMoviesByGenre(id);
+    res.json(movies);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createMovie = async (
   req: Request,
   res: Response,
