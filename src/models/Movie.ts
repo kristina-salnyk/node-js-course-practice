@@ -15,7 +15,7 @@ const movie = new Schema<IMovie>(
       type: String,
       required: true,
       minlength: 3,
-      maxlength: 100
+      maxlength: 1000
     },
     releaseDate: {
       type: Date,
@@ -32,21 +32,7 @@ const movie = new Schema<IMovie>(
   { versionKey: false, timestamps: true }
 );
 
-// movie.pre("save", async (next: NextFunction): Promise<void> => {
-//   // const genreIds = this.genre.map(String);
-//   // const genresExist = await mongoose
-//   //   .model("Genre")
-//   //   .countDocuments({ _id: { $in: genreIds } });
-//   //
-//   // if (genreIds.length !== genresExist) {
-//   //   const invalidGenreIds = genreIds.filter((id) => !genresExist.includes(id));
-//   //   return next(
-//   //     new Error(`Жанры с ID ${invalidGenreIds.join(", ")} не существуют`)
-//   //   );
-//   // }
-//
-//   next();
-// });
+movie.index({ title: 1, releaseDate: 1 }, { unique: true });
 
 const Movie = mongoose.model("movie", movie);
 

@@ -6,7 +6,7 @@ const validateId = () => {
   return (req: Request, _res: Response, next: NextFunction): void => {
     const { id } = req.params;
     if (!isValidObjectId(id)) {
-      const e = new ApiError(`${id} is not correct`, 400);
+      const e = new ApiError("Invalid id", 400);
       return next(e);
     }
 

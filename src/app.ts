@@ -21,19 +21,6 @@ app.use("/api/genres", genresRouter);
 
 /**
  * @swagger
- * components:
- *  schemas:
- *    HealthStatus:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           description: The health status of the server
- *           example: OK
- * tags:
- *   - name: Health
- *     description: Endpoints for checking the health of the server
- *
  * /health-check:
  *   get:
  *     summary: Check the health of the server
@@ -55,38 +42,6 @@ app.get("/health-check", (_req: Request, res: Response): void => {
   res.send({ status: "OK" });
 });
 
-/**
- * @swagger
- * components:
- *  schemas:
- *    NotFoundError:
- *      type: object
- *      properties:
- *        error:
- *          type: string
- *          description: The error message
- *          example: Not found
- *    InternalServerError:
- *      type: object
- *      properties:
- *        error:
- *          type: string
- *          description: The error message
- *          example: Internal server error
- *  responses:
- *    NotFoundErrorResponse:
- *      description: Not Found
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/NotFoundError'
- *    InternalServerErrorResponse:
- *      description: Internal Server Error
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/InternalServerError'
- */
 app.use((_req: Request, res: Response): void => {
   res.status(404).json({ error: "Not found" });
 });

@@ -1,21 +1,35 @@
-import fs from "fs/promises";
-import path from "path";
-import Genre from "../interfaces/Genre";
+import { GenreDocument } from "../types";
+import GenreInput from "../interfaces/GenreInput";
+import Genre from "../models/Genre";
 
-const genresPath = path.resolve(__dirname, "../db/genres-data.json");
-
-const readGenres = async (): Promise<Genre[]> => {
-  const data = await fs.readFile(genresPath, "utf-8");
-  return JSON.parse(data);
-};
-
-export const getGenres = async (): Promise<Genre[]> => {
-  return readGenres();
+export const getGenres = async (): Promise<GenreDocument[]> => {
+  return Genre.find();
 };
 
 export const getGenreById = async (
-  genreId: string
-): Promise<Genre | undefined> => {
-  const genres = await readGenres();
-  return genres.find((item: Genre): boolean => item.id === genreId);
+  id: string
+): Promise<GenreDocument | null> => {
+  return Genre.findOne({ _id: id });
+};
+
+export const removeGenre = async (id: string): Promise<void | null> => {
+  return Genre.findOneAndRemove({ _id: id });
+};
+
+export const createGenre = async (data: GenreInput): Promise<GenreDocument> => {
+  return Genre.create(data);
+};
+
+export const updateGenre = async (
+  id: string,
+  data: GenreInput
+): Promise<GenreDocument | null> => {
+  return Genre.findOneAndUpdate({ _id: id }, data, {
+    new: true,
+    runValidators: true
+  });
+};
+
+export const countGenres = async (ids: string[]): Promise<number> => {
+  return Genre.countDocuments({ _id: { $in: ids } });
 };
