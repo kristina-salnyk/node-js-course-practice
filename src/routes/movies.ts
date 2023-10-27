@@ -1,70 +1,17 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import {
-  addMovie,
+  createMovie,
   getMovieById,
   getMovies,
+  getMoviesByGenre,
   removeMovie,
   updateMovie
-} from "../services/movies";
+} from "../controllers/movies";
 import validateBody from "../middlewares/validateBody";
+import validateId from "../middlewares/validateId";
 import movieInputSchema from "../schemas/movieInputSchema";
 
 const router = express.Router();
-
-/**
- * @swagger
- * tags:
- *   name: Movies
- *   description: Endpoints for managing movies
- * components:
- *  schemas:
- *    Movie:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *           description: The movie id
- *           example: 1
- *         title:
- *           type: string
- *           description: The movie title
- *           example: The Matrix
- *         description:
- *           type: string
- *           description: The movie description
- *           example: A computer hacker learns from mysterious rebels about the true nature of his reality.
- *         genre:
- *           type: array
- *           items:
- *             type: string
- *           description: The movie genre
- *           example: [Action]
- *         duration:
- *           type: number
- *           description: The movie duration in minutes
- *           example: 136
- *    MovieInput:
- *       type: object
- *       properties:
- *         title:
- *           type: string
- *           description: The movie title
- *           example: The Matrix
- *         description:
- *           type: string
- *           description: The movie description
- *           example: A computer hacker learns from mysterious rebels about the true nature of his reality.
- *         genre:
- *           type: array
- *           items:
- *             type: string
- *           description: The movie genre
- *           example: [Action]
- *         duration:
- *           type: number
- *           description: The movie duration in minutes
- *           example: 136
- */
 
 /**
  * @swagger
@@ -75,8 +22,8 @@ const router = express.Router();
  *     parameters: []
  *     responses:
  *       200:
- *         description: Returns a list of movies
- *         content:
+ *          description: Returns a list of movies
+ *          content:
  *           application/json:
  *             schema:
  *               type: array
@@ -87,73 +34,67 @@ const router = express.Router();
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get(
-  "/",
-  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const movies = await getMovies();
-      res.json(movies);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.get("/", getMovies);
 
 /**
  * @swagger
- * /api/movies/{movieId}:
+ * /api/movies/{id}:
  *   get:
  *     summary: Get a movie by id
  *     tags: [Movies]
  *     parameters:
  *       - in: path
- *         name: movieId
+ *         name: id
  *         required: true
- *         description: Id of the movie
+ *         description: The id of the movie
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Returns a movie by id
- *         content:
+ *          description: Returns a movie by id
+ *          content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Movie'
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
  *       404:
- *         description: Movie not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Movie not found
+ *          $ref: '#/components/responses/MovieNotFoundResponse'
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get(
-  "/:movieId",
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | void> => {
-    try {
-      const { movieId } = req.params;
-      const movie = await getMovieById(movieId);
+router.get("/:id", validateId(), getMovieById);
 
-      if (!movie) {
-        return res.status(404).json({ error: "Movie not found" });
-      }
-
-      res.json(movie);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+/**
+ * @swagger
+ * /api/movies/genre/{id}:
+ *   get:
+ *     summary: Get a list of movies by genre
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of the genre
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *          description: Returns a list of movies
+ *          content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Movie'
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
+ *       404:
+ *          $ref: '#/components/responses/GenreNotFoundResponse'
+ *       500:
+ *          $ref: '#/components/responses/InternalServerErrorResponse'
+ */
+router.get("/genre/:id", validateId(), getMoviesByGenre);
 
 /**
  * @swagger
@@ -162,7 +103,7 @@ router.get(
  *     summary: Add a new movie
  *     tags: [Movies]
  *     requestBody:
- *       description: Movie details
+ *       description: The details of the new movie
  *       required: true
  *       content:
  *         application/json:
@@ -170,109 +111,62 @@ router.get(
  *             $ref: '#/components/schemas/MovieInput'
  *     responses:
  *       201:
- *         description: Returns the created movie
- *         content:
+ *          description: Returns the created movie
+ *          content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Invalid input data
+ *          $ref: '#/components/responses/InvalidInputResponse'
  *       404:
  *          $ref: '#/components/responses/NotFoundErrorResponse'
+ *       409:
+ *          $ref: '#/components/responses/MovieExistsResponse'
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.post(
-  "/",
-  validateBody(movieInputSchema),
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { title, description, genre, duration } = req.body;
-      const movie = await addMovie({ title, description, genre, duration });
-      res.status(201).json(movie);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.post("/", validateBody(movieInputSchema), createMovie);
 
 /**
  * @swagger
- * /api/movies/{movieId}:
+ * /api/movies/{id}:
  *   delete:
  *     summary: Delete a movie by id
  *     tags: [Movies]
  *     parameters:
  *       - in: path
- *         name: movieId
+ *         name: id
  *         required: true
- *         description: Id of the movie
+ *         description: The id of the movie
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Movie deleted successfully
+ *          description: Movie deleted successfully
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
  *       404:
- *         description: Movie not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Movie not found
+ *          $ref: '#/components/responses/MovieNotFoundResponse'
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.delete(
-  "/:movieId",
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | void> => {
-    try {
-      const { movieId } = req.params;
-      const movie = await getMovieById(movieId);
-
-      if (!movie) {
-        return res.status(404).json({ error: "Movie not found" });
-      }
-
-      await removeMovie(movieId);
-      res.sendStatus(200);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.delete("/:id", validateId(), removeMovie);
 
 /**
  * @swagger
- * /api/movies/{movieId}:
+ * /api/movies/{id}:
  *   put:
  *     summary: Update a movie by id
  *     tags: [Movies]
  *     parameters:
  *       - in: path
- *         name: movieId
+ *         name: id
  *         required: true
- *         description: Id of the movie
+ *         description: The id of the movie
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Updated movie details
+ *       description: The updated details of the movie
  *       required: true
  *       content:
  *         application/json:
@@ -286,57 +180,14 @@ router.delete(
  *             schema:
  *               $ref: '#/components/schemas/Movie'
  *       400:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Invalid input data
+ *          $ref: '#/components/responses/InvalidInputResponse'
  *       404:
- *         description: Movie not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Movie not found
+ *          $ref: '#/components/responses/MovieNotFoundResponse'
+ *       409:
+ *          $ref: '#/components/responses/MovieExistsResponse'
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.put(
-  "/:movieId",
-  validateBody(movieInputSchema),
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | void> => {
-    try {
-      const { movieId } = req.params;
-      const { title, description, genre, duration } = req.body;
-      const movie = await updateMovie(movieId, {
-        title,
-        description,
-        genre,
-        duration
-      });
-
-      if (!movie) {
-        return res.status(404).json({ error: "Movie not found" });
-      }
-
-      res.json(movie);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.put("/:id", validateId(), validateBody(movieInputSchema), updateMovie);
 
 export default router;

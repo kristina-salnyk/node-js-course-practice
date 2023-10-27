@@ -1,74 +1,49 @@
-import fs from "fs/promises";
-import path from "path";
-import generateUniqueId from "generate-unique-id";
-
-import Movie from "../interfaces/Movie";
+import { MovieDocument } from "../types";
 import MovieInput from "../interfaces/MovieInput";
+import Movie from "../models/Movie";
+import Genre from "../models/Genre";
 
-const moviesPath = path.resolve(__dirname, "../db/movies-data.json");
-
-const writeMovies = async (movies: Movie[]): Promise<void> => {
-  await fs.writeFile(moviesPath, JSON.stringify(movies), "utf-8");
-};
-
-const readMovies = async (): Promise<Movie[]> => {
-  const data = await fs.readFile(moviesPath, "utf-8");
-  return JSON.parse(data);
-};
-
-export const getMovies = async (): Promise<Movie[]> => {
-  return readMovies();
+export const getMovies = async (): Promise<MovieDocument[]> => {
+  return Movie.find().populate("genre", { _id: 1, name: 1 }, Genre);
 };
 
 export const getMovieById = async (
-  movieId: string
-): Promise<Movie | undefined> => {
-  const movies = await readMovies();
-  return movies.find((item: Movie): boolean => item.id === movieId);
-};
-
-export const removeMovie = async (movieId: string): Promise<void> => {
-  const movies = await readMovies();
-  const filteredMovies = movies.filter(
-    (item: Movie): boolean => item.id !== movieId
+  id: string
+): Promise<MovieDocument | null> => {
+  return Movie.findOne({ _id: id }).populate(
+    "genre",
+    { _id: 1, name: 1 },
+    Genre
   );
-  await writeMovies(filteredMovies);
 };
 
-export const addMovie = async (data: MovieInput): Promise<Movie> => {
-  const { title, description, genre, duration } = data;
-  const movies = await readMovies();
+export const removeMovie = async (id: string): Promise<void | null> => {
+  return Movie.findOneAndRemove({ _id: id });
+};
 
-  const movie: Movie = {
-    id: generateUniqueId(),
-    title,
-    description,
-    genre,
-    duration
-  };
-  movies.push(movie);
+export const getMoviesByGenre = async (
+  id: string
+): Promise<MovieDocument[]> => {
+  return Movie.find({ genre: { $in: [id] } }).populate(
+    "genre",
+    { _id: 1, name: 1 },
+    Genre
+  );
+};
 
-  await writeMovies(movies);
-  return movie;
+export const createMovie = async (
+  data: MovieInput
+): Promise<MovieDocument | null> => {
+  const movie = await Movie.create(data);
+  return getMovieById(movie._id);
 };
 
 export const updateMovie = async (
-  movieId: string,
+  id: string,
   data: MovieInput
-): Promise<Movie | undefined> => {
-  const { title, description, genre, duration } = data;
-  const movies = await readMovies();
-
-  const movie = movies.find((item: Movie): boolean => item.id === movieId);
-
-  if (movie) {
-    movie.title = title;
-    movie.description = description;
-    movie.genre = genre;
-    movie.duration = duration;
-
-    await writeMovies(movies);
-  }
-
-  return movie;
+): Promise<MovieDocument | null> => {
+  return Movie.findOneAndUpdate({ _id: id }, data, {
+    new: true,
+    runValidators: true
+  }).populate("genre", { _id: 1, name: 1 }, Genre);
 };

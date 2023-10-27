@@ -11,7 +11,293 @@
         "url": "http://localhost:3000",
         "description": "Local Server"
       }
-    ]
+    ],
+    "tags": [
+      {
+        "name": "Health",
+        "description": "Endpoints for checking the health of the server"
+      },
+      {
+        "name": "Genres",
+        "description": "Endpoints for managing genres"
+      },
+      {
+        "name": "Movies",
+        "description": "Endpoints for managing movies"
+      }
+    ],
+    "components": {
+      "schemas": {
+        "HealthStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "The health status of the server",
+              "example": "OK"
+            }
+          }
+        },
+        "Genre": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "The id of the genre",
+              "example": "652f0744373e017388151857"
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the genre",
+              "example": "Action"
+            }
+          }
+        },
+        "GenreInput": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the genre",
+              "example": "Action"
+            }
+          }
+        },
+        "Movie": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "The id of the movie",
+              "example": "652f0744373e017388151857"
+            },
+            "title": {
+              "type": "string",
+              "description": "The title of the movie",
+              "example": "The Matrix"
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the movie",
+              "example": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+            },
+            "releaseDate": {
+              "type": "string",
+              "description": "The release date of the movie",
+              "example": "2023-03-31T00:00:00.000Z"
+            },
+            "genre": {
+              "type": "array",
+              "description": "The genre of the movie",
+              "items": {
+                "$ref": "#/components/schemas/Genre"
+              },
+              "example": [
+                {
+                  "_id": "652f0744373e017388151857",
+                  "name": "Action"
+                }
+              ]
+            }
+          }
+        },
+        "MovieInput": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "The title of the movie",
+              "example": "The Matrix"
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the movie",
+              "example": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+            },
+            "releaseDate": {
+              "type": "string",
+              "description": "The release date of the movie",
+              "example": "2023-03-31T00:00:00.000Z"
+            },
+            "genre": {
+              "type": "array",
+              "description": "The genre ids of the movie",
+              "items": {
+                "type": "string",
+                "description": "The genre id of the movie",
+                "example": "652f0744373e017388151857"
+              },
+              "example": [
+                "652f0744373e017388151857",
+                "652f0744373e017388151858"
+              ]
+            }
+          }
+        },
+        "GenreNotFoundError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Genre not found"
+            }
+          }
+        },
+        "MovieNotFoundError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Movie not found"
+            }
+          }
+        },
+        "InvalidIdError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Invalid id"
+            }
+          }
+        },
+        "InvalidInputError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Invalid input data"
+            }
+          }
+        },
+        "GenreExistsError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Genre already exists"
+            }
+          }
+        },
+        "MovieExistsError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Movie already exists"
+            }
+          }
+        },
+        "NotFoundError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Not found"
+            }
+          }
+        },
+        "InternalServerError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The error message",
+              "example": "Internal server error"
+            }
+          }
+        }
+      },
+      "responses": {
+        "GenreNotFoundResponse": {
+          "description": "Genre not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenreNotFoundError"
+              }
+            }
+          }
+        },
+        "MovieNotFoundResponse": {
+          "description": "Movie not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovieNotFoundError"
+              }
+            }
+          }
+        },
+        "InvalidIdResponse": {
+          "description": "Invalid id",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvalidIdError"
+              }
+            }
+          }
+        },
+        "InvalidInputResponse": {
+          "description": "Invalid input data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvalidInputError"
+              }
+            }
+          }
+        },
+        "GenreExistsResponse": {
+          "description": "Genre already exists",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GerneExistsError"
+              }
+            }
+          }
+        },
+        "MovieExistsResponse": {
+          "description": "Movie already exists",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovieExistsError"
+              }
+            }
+          }
+        },
+        "NotFoundErrorResponse": {
+          "description": "Resource not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotFoundError"
+              }
+            }
+          }
+        },
+        "InternalServerErrorResponse": {
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalServerError"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "apis": [
     "./src/**/*.ts"

@@ -1,8 +1,8 @@
 interface MovieInput {
   title: string;
   description: string;
+  releaseDate: string;
   genre: string[];
-  duration: number;
 }
 
 export default MovieInput;

@@ -1,27 +1,16 @@
-import express, { NextFunction, Request, Response } from "express";
-import { getGenreById, getGenres } from "../services/genres";
+import express from "express";
+import {
+  createGenre,
+  getGenreById,
+  getGenres,
+  removeGenre,
+  updateGenre
+} from "../controllers/genres";
+import validateBody from "../middlewares/validateBody";
+import validateId from "../middlewares/validateId";
+import genreInputSchema from "../schemas/genreInputSchema";
 
 const router = express.Router();
-
-/**
- * @swagger
- * tags:
- *   name: Genres
- *   description: Endpoints for managing genres
- * components:
- *  schemas:
- *    Genre:
- *      type: object
- *      properties:
- *       id:
- *        type: string
- *        description: The genre id
- *        example: 1
- *       name:
- *        type: string
- *        description: The genre name
- *        example: Action
- */
 
 /**
  * @swagger
@@ -32,8 +21,8 @@ const router = express.Router();
  *     parameters: []
  *     responses:
  *       200:
- *         description: Returns a list of genres
- *         content:
+ *          description: Returns a list of genres
+ *          content:
  *           application/json:
  *             schema:
  *               type: array
@@ -44,72 +33,129 @@ const router = express.Router();
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get(
-  "/",
-  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const genres = await getGenres();
-      res.json(genres);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.get("/", getGenres);
 
 /**
  * @swagger
- * /api/genres/{genreId}:
+ * /api/genres/{id}:
  *   get:
  *     summary: Get a genre by id
  *     tags: [Genres]
  *     parameters:
  *       - in: path
- *         name: genreId
+ *         name: id
  *         required: true
- *         description: Id of the genre
+ *         description: The id of the new genre
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Returns a genre by id
- *         content:
+ *          description: Returns a genre by id
+ *          content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Genre'
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
  *       404:
- *         description: Genre not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message
- *                   example: Genre not found
+ *          $ref: '#/components/responses/GenreNotFoundResponse'
  *       500:
  *          $ref: '#/components/responses/InternalServerErrorResponse'
  */
-router.get(
-  "/:genreId",
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | void> => {
-    try {
-      const { genreId } = req.params;
-      const genre = await getGenreById(genreId);
+router.get("/:id", validateId(), getGenreById);
 
-      if (!genre) {
-        return res.status(404).json({ error: "Genre not found" });
-      }
+/**
+ * @swagger
+ * /api/genres:
+ *   post:
+ *     summary: Add a new genre
+ *     tags: [Genres]
+ *     requestBody:
+ *       description: The details of the new genre
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/GenreInput'
+ *     responses:
+ *       201:
+ *          description: Returns the created genre
+ *          content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Genre'
+ *       400:
+ *          $ref: '#/components/responses/InvalidInputResponse'
+ *       404:
+ *          $ref: '#/components/responses/NotFoundErrorResponse'
+ *       409:
+ *          $ref: '#/components/responses/GenreExistsResponse'
+ *       500:
+ *          $ref: '#/components/responses/InternalServerErrorResponse'
+ */
+router.post("/", validateBody(genreInputSchema), createGenre);
 
-      res.json(genre);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+/**
+ * @swagger
+ * /api/genres/{id}:
+ *   delete:
+ *     summary: Delete a genre by id
+ *     tags: [Genres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of the genre
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *          description: Genre deleted successfully
+ *       400:
+ *          $ref: '#/components/responses/InvalidIdResponse'
+ *       404:
+ *          $ref: '#/components/responses/GenreNotFoundResponse'
+ *       500:
+ *          $ref: '#/components/responses/InternalServerErrorResponse'
+ */
+router.delete("/:id", validateId(), removeGenre);
+
+/**
+ * @swagger
+ * /api/genres/{id}:
+ *   put:
+ *     summary: Update a genre by id
+ *     tags: [Genres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of the genre
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: The updated details of the genre
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/GenreInput'
+ *     responses:
+ *       200:
+ *          description: Returns the updated genre
+ *          content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Genre'
+ *       400:
+ *          $ref: '#/components/responses/InvalidInputResponse'
+ *       404:
+ *          $ref: '#/components/responses/GenreNotFoundResponse'
+ *       409:
+ *          $ref: '#/components/responses/GenreExistsResponse'
+ *       500:
+ *          $ref: '#/components/responses/InternalServerErrorResponse'
+ */
+router.put("/:id", validateId(), validateBody(genreInputSchema), updateGenre);
 
 export default router;

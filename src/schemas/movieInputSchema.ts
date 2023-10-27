@@ -8,15 +8,18 @@ const movieInputSchema = Joi.object({
     .messages({ "any.required": "Missing required title field" }),
   description: Joi.string()
     .min(3)
-    .max(100)
+    .max(1000)
     .required()
     .messages({ "any.required": "Missing required description field" }),
-  genre: Joi.array().items(Joi.string().min(3).max(30)).required().messages({
-    "any.required": "Missing required genre field"
+  releaseDate: Joi.date().required().messages({
+    "any.required": "Missing required releaseDate field"
   }),
-  duration: Joi.number().integer().min(1).max(500).required().messages({
-    "any.required": "Missing required duration field"
-  })
+  genre: Joi.array()
+    .items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/))
+    .required()
+    .messages({
+      "any.required": "Missing required genre field"
+    })
 });
 
 export default movieInputSchema;
