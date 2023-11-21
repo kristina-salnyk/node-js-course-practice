@@ -1,5 +1,5 @@
-import { MovieDocument } from "../types";
-import MovieInput from "../interfaces/MovieInput";
+import MovieDocument from "../documents/MovieDocument";
+import MovieInput from "../inputs/MovieInput";
 import Movie from "../models/Movie";
 import Genre from "../models/Genre";
 

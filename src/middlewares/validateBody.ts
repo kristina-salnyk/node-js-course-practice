@@ -2,8 +2,8 @@ import { ObjectSchema } from "joi";
 import { NextFunction, Request, Response } from "express";
 
 import ApiError from "../errors/ApiError";
-import MovieInput from "../interfaces/MovieInput";
-import GenreInput from "../interfaces/GenreInput";
+import MovieInput from "../inputs/MovieInput";
+import GenreInput from "../inputs/GenreInput";
 
 const validateBody = (schema: ObjectSchema<MovieInput | GenreInput>) => {
   return (req: Request, _res: Response, next: NextFunction): void => {

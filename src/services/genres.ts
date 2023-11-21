@@ -1,5 +1,5 @@
-import { GenreDocument } from "../types";
-import GenreInput from "../interfaces/GenreInput";
+import GenreDocument from "../documents/GenreDocument";
+import GenreInput from "../inputs/GenreInput";
 import Genre from "../models/Genre";
 
 export const getGenres = async (): Promise<GenreDocument[]> => {
