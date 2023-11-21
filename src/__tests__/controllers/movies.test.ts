@@ -4,7 +4,9 @@ import {
   createMovie,
   getMovieById,
   getMovies,
-  getMoviesByGenre
+  getMoviesByGenre,
+  removeMovie,
+  updateMovie
 } from "../../controllers/movies";
 import * as movieService from "../../services/movies";
 import * as genreService from "../../services/genres";
@@ -154,6 +156,118 @@ describe("Movie Controller", (): void => {
       await createMovie(req, res, next);
 
       expect(movieService.createMovie).toHaveBeenCalledWith(movieInput);
+      expect(next).toHaveBeenCalledWith(
+        new ApiError("Movie already exists", 409)
+      );
+    });
+  });
+
+  describe("Remove movie", (): void => {
+    it("should respond with OK status", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId } });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(movieService, "getMovieById").mockResolvedValue(movieDocument);
+
+      jest.spyOn(movieService, "removeMovie").mockResolvedValue();
+
+      await removeMovie(req, res, next);
+
+      expect(movieService.removeMovie).toHaveBeenCalledWith(movieId);
+      expect(res.sendStatus).toHaveBeenCalledWith(200);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it("should respond with an error if movie is not found", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId } });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(movieService, "getMovieById").mockResolvedValue(null);
+
+      await removeMovie(req, res, next);
+
+      expect(movieService.getMovieById).toHaveBeenCalledWith(movieId);
+      expect(next).toHaveBeenCalledWith(new ApiError("Movie not found", 404));
+    });
+  });
+
+  describe("Update movie", (): void => {
+    it("should respond with an updated movie", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId }, body: movieInput });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(genreService, "countGenres").mockResolvedValue(1);
+
+      jest.spyOn(movieService, "updateMovie").mockResolvedValue(movieDocument);
+
+      await updateMovie(req, res, next);
+
+      expect(movieService.updateMovie).toHaveBeenCalledWith(
+        movieId,
+        movieInput
+      );
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: movieInput.title,
+          description: movieInput.description,
+          releaseDate: new Date(movieInput.releaseDate),
+          genre: [
+            expect.objectContaining({
+              _id: new Types.ObjectId(genreId)
+            })
+          ]
+        })
+      );
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it("should respond with an error if genre is not found", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId }, body: movieInput });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(genreService, "countGenres").mockResolvedValue(0);
+
+      await updateMovie(req, res, next);
+
+      expect(genreService.countGenres).toHaveBeenCalledWith(movieInput.genre);
+      expect(next).toHaveBeenCalledWith(new ApiError("Genre not found", 404));
+    });
+
+    it("should respond with an error if movie is not found", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId }, body: movieInput });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(genreService, "countGenres").mockResolvedValue(1);
+
+      jest.spyOn(movieService, "updateMovie").mockResolvedValue(null);
+
+      await updateMovie(req, res, next);
+
+      expect(movieService.updateMovie).toHaveBeenCalledWith(
+        movieId,
+        movieInput
+      );
+      expect(next).toHaveBeenCalledWith(new ApiError("Movie not found", 404));
+    });
+
+    it("should respond with an error if movie already exists", async (): Promise<void> => {
+      const req = getMockReq({ params: { id: movieId }, body: movieInput });
+      const { res, next } = getMockRes();
+
+      jest.spyOn(genreService, "countGenres").mockResolvedValue(1);
+
+      const error = new mongoose.mongo.MongoError(
+        "E11000 duplicate key error collection"
+      );
+      error.code = 11000;
+      jest.spyOn(movieService, "updateMovie").mockRejectedValue(error);
+
+      await updateMovie(req, res, next);
+
+      expect(movieService.updateMovie).toHaveBeenCalledWith(
+        movieId,
+        movieInput
+      );
       expect(next).toHaveBeenCalledWith(
         new ApiError("Movie already exists", 409)
       );
