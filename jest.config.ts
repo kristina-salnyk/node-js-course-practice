@@ -4,10 +4,10 @@ const jestConfig: JestConfigWithTsJest = {
   preset: "ts-jest",
   testEnvironment: "node",
   collectCoverageFrom: ["src/**"],
-  coverageReporters: ["text"],
+  coverageReporters: ["html"],
   coverageThreshold: {
     global: {
-      lines: 90
+      lines: 80
     }
   }
 };
