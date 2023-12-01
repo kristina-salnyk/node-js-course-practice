@@ -11,3 +11,7 @@ export const genreDocument: GenreDocument = new Genre({
   _id: genreId,
   name: genreInput.name
 });
+
+export const invalidGenreInput = {
+  name: "1"
+};
