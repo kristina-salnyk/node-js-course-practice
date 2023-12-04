@@ -9,7 +9,8 @@ const jestConfig: JestConfigWithTsJest = {
     global: {
       lines: 80
     }
-  }
+  },
+  coveragePathIgnorePatterns: ["/node_modules/", "/services/"]
 };
 
 export default jestConfig;

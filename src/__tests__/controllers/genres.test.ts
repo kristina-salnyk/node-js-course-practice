@@ -2,7 +2,6 @@ import { getMockReq, getMockRes } from "@jest-mock/express";
 import mongoose, { Types } from "mongoose";
 import * as genreService from "../../services/genres";
 import ApiError from "../../errors/ApiError";
-import { genreDocument, genreId, genreInput } from "../../__mocks__/genre";
 import {
   createGenre,
   getGenreById,
@@ -10,6 +9,7 @@ import {
   removeGenre,
   updateGenre
 } from "../../controllers/genres";
+import { genreDocument, genreId, genreInput } from "../../__mocks__/genre";
 
 describe("Genre Controller", (): void => {
   afterEach((): void => {
