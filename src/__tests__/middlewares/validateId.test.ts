@@ -1,8 +1,8 @@
 import { getMockReq, getMockRes } from "@jest-mock/express";
 import mongoose, { isValidObjectId } from "mongoose";
-import { genreId } from "../../__mocks__/genre";
 import validateId from "../../middlewares/validateId";
 import ApiError from "../../errors/ApiError";
+import { genreId } from "../../__mocks__/genre";
 
 describe("Validate Id Middleware", (): void => {
   afterEach((): void => {

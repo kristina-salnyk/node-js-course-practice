@@ -1,11 +1,14 @@
-import { ValidationError, ValidationResult } from "joi";
+import Joi, { ValidationError } from "joi";
 import { getMockReq, getMockRes } from "@jest-mock/express";
-import { genreInput } from "../../__mocks__/genre";
-import genreInputSchema from "../../schemas/genreInputSchema";
 import validateBody from "../../middlewares/validateBody";
 import ApiError from "../../errors/ApiError";
+import { genreInput } from "../../__mocks__/genre";
 
 describe("Validate Body Middleware", (): void => {
+  const inputSchema = Joi.object({
+    name: Joi.string().required()
+  });
+
   afterEach((): void => {
     jest.clearAllMocks();
   });
@@ -14,16 +17,13 @@ describe("Validate Body Middleware", (): void => {
     const req = getMockReq({ body: genreInput });
     const { res, next } = getMockRes();
 
-    const mockValidate = jest.fn(
-      () =>
-        ({
-          error: undefined,
-          value: {}
-        }) as ValidationResult
-    );
-    jest.spyOn(genreInputSchema, "validate").mockImplementation(mockValidate);
+    const mockValidate = jest.fn(() => ({
+      error: undefined,
+      value: {}
+    }));
+    jest.spyOn(inputSchema, "validate").mockImplementation(mockValidate);
 
-    const middleware = validateBody(genreInputSchema);
+    const middleware = validateBody(inputSchema);
     middleware(req, res, next);
 
     expect(mockValidate).toHaveBeenCalledWith(genreInput);
@@ -34,16 +34,13 @@ describe("Validate Body Middleware", (): void => {
     const req = getMockReq({ body: {} });
     const { res, next } = getMockRes();
 
-    const mockValidate = jest.fn(
-      () =>
-        ({
-          error: undefined,
-          value: {}
-        }) as ValidationResult
-    );
-    jest.spyOn(genreInputSchema, "validate").mockImplementation(mockValidate);
+    const mockValidate = jest.fn(() => ({
+      error: undefined,
+      value: {}
+    }));
+    jest.spyOn(inputSchema, "validate").mockImplementation(mockValidate);
 
-    const middleware = validateBody(genreInputSchema);
+    const middleware = validateBody(inputSchema);
     middleware(req, res, next);
 
     expect(mockValidate).not.toHaveBeenCalled();
@@ -54,16 +51,13 @@ describe("Validate Body Middleware", (): void => {
     const req = getMockReq({ body: genreInput });
     const { res, next } = getMockRes();
 
-    const mockValidate = jest.fn(
-      () =>
-        ({
-          error: new ValidationError("Invalid input", [], {}),
-          value: {}
-        }) as ValidationResult
-    );
-    jest.spyOn(genreInputSchema, "validate").mockImplementation(mockValidate);
+    const mockValidate = jest.fn(() => ({
+      error: new ValidationError("Invalid input", [], {}),
+      value: {}
+    }));
+    jest.spyOn(inputSchema, "validate").mockImplementation(mockValidate);
 
-    const middleware = validateBody(genreInputSchema);
+    const middleware = validateBody(inputSchema);
     middleware(req, res, next);
 
     expect(mockValidate).toHaveBeenCalledWith(genreInput);
