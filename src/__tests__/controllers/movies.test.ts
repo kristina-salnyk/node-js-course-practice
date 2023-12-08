@@ -160,7 +160,7 @@ describe("Movie Controller", (): void => {
         expect.objectContaining({
           title: movieInput.title,
           description: movieInput.description,
-          releaseDate: new Date(movieInput.releaseDate),
+          releaseDate: movieInput.releaseDate,
           genre: [
             expect.objectContaining({
               _id: new Types.ObjectId(genreId)
@@ -282,7 +282,7 @@ describe("Movie Controller", (): void => {
         expect.objectContaining({
           title: movieInput.title,
           description: movieInput.description,
-          releaseDate: new Date(movieInput.releaseDate),
+          releaseDate: movieInput.releaseDate,
           genre: [
             expect.objectContaining({
               _id: new Types.ObjectId(genreId)

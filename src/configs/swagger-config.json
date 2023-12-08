@@ -82,7 +82,7 @@
               "example": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
             },
             "releaseDate": {
-              "type": "string",
+              "type": "date",
               "description": "The release date of the movie",
               "example": "2023-03-31T00:00:00.000Z"
             },
@@ -115,7 +115,7 @@
               "example": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
             },
             "releaseDate": {
-              "type": "string",
+              "type": "date",
               "description": "The release date of the movie",
               "example": "2023-03-31T00:00:00.000Z"
             },
