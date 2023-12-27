@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import IMovie from "../interfaces/Movie";
+import MovieDocument from "../documents/MovieDocument";
 
 const Schema = mongoose.Schema;
 
-const movie = new Schema<IMovie>(
+const movie = new Schema<MovieDocument>(
   {
     title: {
       type: String,
@@ -34,6 +34,6 @@ const movie = new Schema<IMovie>(
 
 movie.index({ title: 1, releaseDate: 1 }, { unique: true });
 
-const Movie = mongoose.model("movie", movie);
+const Movie = mongoose.model<MovieDocument>("movie", movie);
 
 export default Movie;

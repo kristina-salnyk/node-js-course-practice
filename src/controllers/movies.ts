@@ -47,7 +47,7 @@ export const getMoviesByGenre = async (
     const { id } = req.params;
     const genreCount = await genreService.countGenres([id]);
 
-    if (genreCount === 0) {
+    if (genreCount !== 1) {
       const e = new ApiError("Genre not found", 404);
       return next(e);
     }

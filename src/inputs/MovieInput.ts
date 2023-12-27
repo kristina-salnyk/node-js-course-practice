@@ -1,7 +1,7 @@
 interface MovieInput {
   title: string;
   description: string;
-  releaseDate: string;
+  releaseDate: Date;
   genre: string[];
 }
 
